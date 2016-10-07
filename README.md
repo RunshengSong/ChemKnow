@@ -1,2 +1,6 @@
 # cs273
-cs273 course project,
+
+_______________________________________
+This is the course project repo for cs273@ucsb
+
+author: runsheng song and yiting ju
