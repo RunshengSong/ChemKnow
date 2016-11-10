@@ -12,7 +12,6 @@ import re
 import wikipedia as wiki
 from textblob import TextBlob
 
-
 def get_sentence_for_chem_in_list(list_excel, output_name):
     
     df = pd.ExcelFile(list_excel,header=0).parse('Sheet1')
@@ -51,20 +50,23 @@ def findWholeWord(w):
     return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
 
             
-def search_wiki_match_name(chemical_name):
+def search_wiki_match_name(product_name, reactant_name):
     '''
     experiment
     '''
-    chemical_name = chemical_name.lower()
-    this_page = wiki.WikipediaPage(chemical_name)
+    product_name = product_name.lower()
+    reactant_name = reactant_name.lower()
+    
+    this_page = wiki.WikipediaPage(product_name)
     
     raw_text = this_page.content
     zen = TextBlob(raw_text)
     for eachSentence in zen.sentences:
         thisSentence = str(eachSentence).lower()
-        find_or_not = findWholeWord(chemical_name)(thisSentence)
+        find_or_not = findWholeWord(reactant_name)(thisSentence)
         if find_or_not:
             print thisSentence
+            raw_input()
         else:
             print 'No'
 
@@ -79,6 +81,12 @@ def search_wiki(chemical_name):
     zen = TextBlob(raw_text)
     print zen
 
+def strip_word(sentence):
+    '''
+    experiment
+    '''
+    
+
             
             
 if __name__ == '__main__':
@@ -86,7 +94,8 @@ if __name__ == '__main__':
     output_name = 'positive_sentence_wiki.csv'
     
 #     get_sentence_for_chem_in_list(list_excel, output_name)
-    search_wiki('ethylenediamine tetraacetic acid')
+#     search_wiki_match_name('trichloroethylene', '1,1,2,2-tetrachloroethane')
+    search_wiki('2-butanol')
            
                 
         
