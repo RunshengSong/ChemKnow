@@ -35,7 +35,8 @@ class Bing_search_cog_API:
 			# Request parameters
 			'q': query,
 			'count': count,
-			'mkt': 'en-us'
+			'mkt': 'en-us',
+			'responseFilter': "Webpages"
 		})
 
 		try:
@@ -100,7 +101,7 @@ def bing_search_api(query, source_type = "Web", top = 10, format = 'json'):
 
 
 if __name__ == '__main__':
-	bingQuery = Bing_search_cog_API("Benzene")
-	urlList = bingQuery.getWebpagesURLs()
-	print urlList
-
+	# bingQuery = Bing_search_cog_API("Benzene")
+	# urlList = bingQuery.getWebpagesURLs()
+	# print urlList
+	pass
