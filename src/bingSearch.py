@@ -12,8 +12,9 @@ from requests.auth import HTTPBasicAuth
 import pprint
 
 # Bing API key
-API_KEY = "dWQ7MD1EDESHauQ8bMHT43KBrh/4lR+Uz84EpjmLezU"
-API_COG_KEY = "be059325b7ec447598b5750223f2df0a"
+API_KEY = ""
+API_COG_KEY = ""
+API_COG_KEY2 = ""
 
 
 """
@@ -101,7 +102,7 @@ def bing_search_api(query, source_type = "Web", top = 10, format = 'json'):
 
 
 if __name__ == '__main__':
-	# bingQuery = Bing_search_cog_API("Benzene")
-	# urlList = bingQuery.getWebpagesURLs()
-	# print urlList
-	pass
+	bingQuery = Bing_search_cog_API("isophytol myrcene")
+	urlList = bingQuery.getWebpagesURLs()
+	print urlList
+	# pass
