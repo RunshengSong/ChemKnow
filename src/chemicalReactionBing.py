@@ -110,10 +110,10 @@ def writeToCSVAppend(chem1, chem2, sentList, csvFilePath):
 def getReactionSentsFromBingNWrite():
 	chemicalListCSV = os.path.join(DATA_FOLDER_PATH, "chemical_list.csv")
 	chemicalList, reactorList = getChemicalsNReactors(chemicalListCSV)
-	for i in range(len(chemicalList)):
+	for i in range(len(chemicalList))[:]:
 		chem = chemicalList[i]
 		reactor = reactorList[i]
-		bingQuery = Bing_search_cog_API(str(chem) + str(reactor))
+		bingQuery = Bing_search_cog_API(str(chem) + " " + str(reactor))
 		urlList = bingQuery.getWebpagesURLs()
 		sentListToWrite = []
 		for url in urlList:
