@@ -27,8 +27,6 @@ def remove_equation(sentence):
     return ' '.join(sentence_list)
     
 
-
-
 if __name__ == '__main__':
     with open('./data/positive_sentence_wiki.csv','rb') as myReadfile:
         with open('./data/sentence_cleanup.csv','wb') as myWriterfile:
