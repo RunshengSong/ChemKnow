@@ -116,17 +116,21 @@ def getReactionSentsFromBingNWrite():
 		bingQuery = Bing_search_cog_API(str(chem) + " " + str(reactor))
 		urlList = bingQuery.getWebpagesURLs()
 		sentListToWrite = []
-		if len(urlList) > 0:
-			for url in urlList:
-				htmlContentInSents = scrapeWebContent(url)
-				if len(htmlContentInSents) <= 1:
-					continue
-				sentList = filterSent(htmlContentInSents, chem, reactor)
-				sentListToWrite += sentList
-			writeToCSVAppend(chem, reactor, sentListToWrite, os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
-			print i, len(sentListToWrite)
-			# if i == 800:
-			# 	break
+		if urlList is not None:
+			if len(urlList) > 0:
+				for url in urlList:
+					htmlContentInSents = scrapeWebContent(url)
+					if len(htmlContentInSents) <= 1:
+						continue
+					sentList = filterSent(htmlContentInSents, chem, reactor)
+					sentListToWrite += sentList
+				writeToCSVAppend(chem, reactor, sentListToWrite, os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
+				print i, len(sentListToWrite)
+				# if i == 800:
+				# 	break
+			else:
+				writeToCSVAppend(chem, reactor, [], os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
+				print i, 0
 		else:
 			writeToCSVAppend(chem, reactor, [], os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
 			print i, 0
