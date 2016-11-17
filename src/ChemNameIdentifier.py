@@ -59,7 +59,7 @@ def parseRespJson(respJson, text):
 
 
 if __name__ == '__main__':
-	text = "Pharmacokinetic studies show that there are no significant alterations in pharmacokinetic parameters of zidovudine or rifabutin to warrant dosage adjustment when megestrol acetate is administered with these drugs. A pharmacokinetic study demonstrated that coadministration of megestrol acetate and indinavir results in a significant decrease in the pharmacokinetic parameters (~36% for Cmax and ~28% for AUC) of indinavir. Administration of a higher dose of indinavir should be considered when coadministering with megestrol acetate. The effects of indinavir, zidovudine or rifabutin on the pharmacokinetics of megestrol acetate were not studied."
+	text = "exhaust gas from an internal combustion engine whose fuel includes nitromethane will contain nitric acid vapour, which is corrosive, and when inhaled causes a muscular reaction making it impossible to breathe."
 	identifiedChem = identifyChem(text)
 	for chem in identifiedChem:
 		print chem

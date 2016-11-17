@@ -38,18 +38,41 @@ def _replace_chem_name(sentence, product, reactant):
     
     if product not in reactant and reactant not in product:
         # if products and reactants are exclusive
-        sentence = re.sub(product+'s?', 'CHEMICAL1', sentence)
-        sentence = re.sub(reactant+'s?','CHEMICAL2', sentence)
+        sentence = re.sub(product+'s?', 'chem', sentence)
+        sentence = re.sub(reactant+'s?','chem', sentence)
     elif product in reactant:
         # order matters now
-        sentence = re.sub(reactant+'s?', 'CHEMICAL1', sentence)
-        sentence = re.sub(product+'s?','CHEMICAL2', sentence)
+        sentence = re.sub(reactant+'s?', 'chem', sentence)
+        sentence = re.sub(product+'s?','chem', sentence)
     elif reactant in product:
         # order matters 
-        sentence = re.sub(product+'s?', 'CHEMICAL1', sentence)
-        sentence = re.sub(reactant+'s?','CHEMICAL2', sentence)
+        sentence = re.sub(product+'s?', 'chem', sentence)
+        sentence = re.sub(reactant+'s?','chem', sentence)
 
     return sentence
+
+def _trimming(token_sentence, buffer=5):
+    '''
+    take the sentence between the first and last occurance of 'chem'
+    plus buffer
+    '''
+    first_idx = 0
+    last_idx = len(token_sentence)
+    for idx, eachWord in enumerate(token_sentence):
+        if eachWord == 'chem':
+            first_idx = idx
+            break
+    
+    for idx, eachWord in enumerate(reversed(token_sentence)):
+        if eachWord == 'chem':
+            last_idx = len(token_sentence) - idx - 1
+            
+    first_idx = max(0, first_idx - buffer)
+    last_idx = min(last_idx + buffer, len(token_sentence))
+    
+    token_sentence = token_sentence[first_idx: last_idx] # trimming here
+    return token_sentence
+        
 
 def _tokenize_sentence(input_sentence, buffer=5):
     '''
@@ -72,14 +95,11 @@ def _tokenize_sentence(input_sentence, buffer=5):
     token_sentence = [word for word in token_sentence if not word.isdigit()]
     
     ''' trimming '''
-    first_index = max(0, min(token_sentence.index("CHEMICAL1") - buffer, token_sentence.index("CHEMICAL2") - buffer)) # take the index of the first appearance of the product or reactant, whichever come first, minus the buffer
-    last_index = min(len(token_sentence), max(token_sentence.index("CHEMICAL2") + buffer, token_sentence.index("CHEMICAL1") + buffer)) # the same logic as the one above
-    
-    token_sentence = token_sentence[first_index: last_index] # trimming here
-    
+    token_sentence = _trimming(token_sentence,buffer = buffer)
+        
     return token_sentence
     
-def trim_sentence(df, buffer=5):
+def trim_sentence(df, buffer=10):
     '''
     this function trim the sentence to only get the words between each pair
     plus few words before and after each pair (depends on the buffer)
@@ -97,8 +117,9 @@ def trim_sentence(df, buffer=5):
                 if this_product in eachSentence and this_reactant in eachSentence:
                     
                     eachSentence = _replace_chem_name(eachSentence, this_product, this_reactant)
-                    
-                    eachSentence = _tokenize_sentence(eachSentence, buffer=5)
+                    print this_product, this_reactant
+                    print eachSentence
+                    eachSentence = _tokenize_sentence(eachSentence, buffer=buffer)
                     trimmed_sentence.append(eachSentence)
                 else:
                     # if the sentence does not have both product and reactants
@@ -110,10 +131,10 @@ def trim_sentence(df, buffer=5):
     return trimmed_sentence
 
 if __name__ == '__main__':
-    df = pd.read_excel('./data/positive_cleanup.xlsx',header=None)
+    df = pd.read_excel('./data/negative_cleanup.xlsx',header=None)
     trimmed_sentence = trim_sentence(df)
     
-    with open('trimmed_sentence.csv','wb') as myfile:
+    with open('trimmed_sentence_negative.csv','wb') as myfile:
         thisWriter = csv.writer(myfile)
         for eachSentence in trimmed_sentence:
 
