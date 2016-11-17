@@ -174,7 +174,6 @@ def trim_sentence(df, buffer=10):
             else:
                 # break for null sentence, indicating the end of this line
                 break
-            
     return trimmed_sentence
 
 
