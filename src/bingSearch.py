@@ -30,7 +30,7 @@ class Bing_search_cog_API:
 		headers = {
 			# Request headers
 			'User-Agent': user_agent,
-			'Ocp-Apim-Subscription-Key': API_COG_KEY
+			'Ocp-Apim-Subscription-Key': API_COG_KEY2
 		}
 		params = urllib.urlencode({
 			# Request parameters
@@ -58,10 +58,13 @@ class Bing_search_cog_API:
 	def getWebpagesURLs(self):
 		if self.success == True:
 			urlList = []
-			webpages = self.result["webPages"]["value"]
-			for webpage in webpages:
-				urlList.append(webpage["url"])
-			return urlList
+			if "webPages" in self.result:
+				webpages = self.result["webPages"]["value"]
+				for webpage in webpages:
+					urlList.append(webpage["url"])
+				return urlList
+			else:
+				return None
 		else:
 			return None
 
