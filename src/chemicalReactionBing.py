@@ -53,7 +53,7 @@ def scrapeWebContent(url):
 	try:
 		r = s.get(url, timeout=20)
 		r.raise_for_status()
-		text = BeautifulSoup(r.text)
+		text = BeautifulSoup(r.text, 'lxml')
 		for script in text(["script", "style"]):
 			script.extract()    # rip it out
 		
@@ -116,16 +116,20 @@ def getReactionSentsFromBingNWrite():
 		bingQuery = Bing_search_cog_API(str(chem) + " " + str(reactor))
 		urlList = bingQuery.getWebpagesURLs()
 		sentListToWrite = []
-		for url in urlList:
-			htmlContentInSents = scrapeWebContent(url)
-			if len(htmlContentInSents) <= 1:
-				continue
-			sentList = filterSent(htmlContentInSents, chem, reactor)
-			sentListToWrite += sentList
-		writeToCSVAppend(chem, reactor, sentListToWrite, os.path.join(DATA_FOLDER_PATH, "reaction_Sents.csv"))
-		print i, len(sentListToWrite)
-		if i == 800:
-			break
+		if len(urlList) > 0:
+			for url in urlList:
+				htmlContentInSents = scrapeWebContent(url)
+				if len(htmlContentInSents) <= 1:
+					continue
+				sentList = filterSent(htmlContentInSents, chem, reactor)
+				sentListToWrite += sentList
+			writeToCSVAppend(chem, reactor, sentListToWrite, os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
+			print i, len(sentListToWrite)
+			# if i == 800:
+			# 	break
+		else:
+			writeToCSVAppend(chem, reactor, [], os.path.join(DATA_FOLDER_PATH, "reaction_Sents2.csv"))
+			print i, 0
 
 
 
