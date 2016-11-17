@@ -1,9 +1,9 @@
 '''
-Created on Nov 14, 2016
-preprocessing of the positive and negative sentences
+Created on Nov 17, 2016
 
 @author: rsong_admin
 '''
+import csv
 from nltk.corpus import stopwords
 
 import csv
@@ -13,6 +13,53 @@ import numpy as np
 import nltk
 import string
 
+def _remove_equation(sentence):
+    '''
+    remove the chemical reactaion equation from the sentence
+    '''
+    sentence_list = sentence.splitlines() # split the sentence by lines
+    
+    
+    # remove the title line from the sentence
+    for eachLine in sentence_list:
+        if eachLine.startswith('==') and eachLine.endswith('=='):
+            sentence_list.remove(eachLine)
+    
+    # remove the chemical reaction equation from the sentence
+    for eachLine in sentence_list:
+        if '???' in eachLine and '+' in eachLine:
+            sentence_list.remove(eachLine)
+        
+    return ' '.join(sentence_list)
+
+def clean_up_sentence(input_file, output_file):
+    '''
+    clean up the equations in eachsentence in the input files
+    write the results in the output_file
+    '''
+    with open(input_file,'rb') as myReadfile:
+        with open(output_file,'wb') as myWriterfile:
+            
+            thisReader = csv.reader(myReadfile)
+            thisWriter = csv.writer(myWriterfile)
+            count = 0
+            for eachRow in thisReader:
+                thisResults = []
+                count += 1
+                if count >= 2: # skip the first line
+                    thisProd = eachRow[0]
+                    thisReact = eachRow[1]
+                    thisResults.append(thisProd)
+                    thisResults.append(thisReact)
+                    
+                    allSentence = eachRow[2:] # only dealing with the first sentence for now
+                    for thisSentence in allSentence:
+                        if thisSentence:
+                            thisSentence = _remove_equation(thisSentence) # remove equation and title line if exist
+                            thisResults.append(thisSentence)
+                        else:
+                            break
+                thisWriter.writerow(thisResults)
 
 def _remove_plural(sentence, product, reactant):
     '''
@@ -130,22 +177,7 @@ def trim_sentence(df, buffer=10):
             
     return trimmed_sentence
 
-if __name__ == '__main__':
-    df = pd.read_excel('./data/negative_cleanup.xlsx',header=None)
-    trimmed_sentence = trim_sentence(df)
-    
-    with open('trimmed_sentence_negative.csv','wb') as myfile:
-        thisWriter = csv.writer(myfile)
-        for eachSentence in trimmed_sentence:
 
-            thisWriter.writerow(eachSentence)
-        
-   
 
     
 
-    
-    
-    
-    
-    
