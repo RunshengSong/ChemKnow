@@ -138,7 +138,7 @@ def _tokenize_sentence(input_sentence, buffer=5):
                
     # remove len < 3
     token_sentence = [word for word in token_sentence if not len(word)<3]
-
+ 
         # remove chemical formula here
 
     # trim sentence, get only the part between the first and the last occurance of 'chem'
@@ -204,7 +204,7 @@ def trim_negative_sentence(df, buffer=10):
                     eachSentence = _replace_chem_name(eachSentence, this_product)
 
                     eachSentence = _tokenize_sentence(eachSentence, buffer=buffer)
-                    eachSentence = ' '.join(eachSentence)
+                    eachSentence = ' '.join(eachSentence) # join it back to be a sentence
                     trimmed_sentence.append(eachSentence)
                 else:
                     # if the sentence does not have both product and reactants
