@@ -217,10 +217,10 @@ def trim_negative_sentence(df, buffer=10):
 
 if __name__ == '__main__':
     # test
-    df = pd.read_csv('../data/raw_data/negative_sentence_wiki.csv',header=0)
+    df = pd.read_excel('../data/raw_data/positive_cleanup.xlsx',header=0)
     trimmed_negative = trim_negative_sentence(df)
     
-    with open('negative_sentence_trimmed.csv','wb') as myfile:
+    with open('positive_sentence_trimmed.csv','wb') as myfile:
         thisWriter = csv.writer(myfile)
         for eachSen in trimmed_negative:
             thisWriter.writerow([eachSen])
