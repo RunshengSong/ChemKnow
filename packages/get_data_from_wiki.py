@@ -13,7 +13,6 @@ import re
 import wikipedia as wiki
 from textblob import TextBlob
 from random import shuffle
-
 import data_preparation as dp
 
 

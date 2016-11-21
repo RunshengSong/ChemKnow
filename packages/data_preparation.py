@@ -95,39 +95,52 @@ def _trimming(token_sentence, buffer=5):
     '''
     take the sentence between the first and last occurance of 'chem'
     plus buffer
+    
+    If there is just one chem show up, take the buffer word around it
     '''
     first_idx = 0
     last_idx = len(token_sentence)
-    for idx, eachWord in enumerate(token_sentence):
-        if eachWord == 'chem':
-            first_idx = idx
-            break
     
-    for idx, eachWord in enumerate(reversed(token_sentence)):
-        if eachWord == 'chem':
-            last_idx = len(token_sentence) - idx - 1
+    if token_sentence.count('chem') == 1:
+        # if there is only one chem
+        
+        this_idx = token_sentence.index('chem')
+        first_idx = max(0, this_idx - buffer)
+        last_idx = min(this_idx + buffer, len(token_sentence))
+
+    else:  
+        # more than one or zero, the same 
+        for idx, eachWord in enumerate(token_sentence):
+            if eachWord == 'chem':
+                first_idx = idx
+                break
+        
+        for idx, eachWord in enumerate(reversed(token_sentence)):
+            if eachWord == 'chem':
+                last_idx = len(token_sentence) - idx - 1
             
-    first_idx = max(0, first_idx - buffer)
-    last_idx = min(last_idx + buffer, len(token_sentence))
+        first_idx = max(0, first_idx - buffer)
+        last_idx = min(last_idx + buffer, len(token_sentence))
     
     token_sentence = token_sentence[first_idx: last_idx] # trimming here
     return token_sentence
         
-def _tokenize_sentence(input_sentence, buffer=5):
+def _tokenize_sentence(input_sentence):
     '''
     tokenize the sentence, with input buffer
     remove stop words and digits
     
     Also stem the tokenized sentence
     '''
-
+    
     # remove punctunation
     input_sentence = " ".join("".join([" " if ch in string.punctuation else ch for ch in input_sentence]).split()) 
     
-    token_sentence = nltk.word_tokenize(input_sentence) # tokenize the sentence
+    input_sentence = input_sentence.decode('utf-8','ignore')
+    token_sentence = nltk.word_tokenize(input_sentence.decode('utf-8')) # tokenize the sentence
     
     # convert each element to string
-    token_sentence = map(str, token_sentence) 
+    [x.encode('utf-8') for x in token_sentence]
     
     
     # remove stop words
@@ -138,6 +151,9 @@ def _tokenize_sentence(input_sentence, buffer=5):
                
     # remove len < 3
     token_sentence = [word for word in token_sentence if not len(word)<3]
+    
+    # remove ???
+    token_sentence = [word for word in token_sentence if not ('?' in word)]
  
         # remove chemical formula here
 
@@ -168,7 +184,7 @@ def trim_positive_sentence(df, buffer=10):
                     eachSentence = _replace_chem_name(eachSentence, this_product, this_reactant)
                     print this_product, this_reactant
                     print eachSentence
-                    eachSentence = _tokenize_sentence(eachSentence, buffer=buffer)
+                    eachSentence = _tokenize_sentence(eachSentence)
                     trimmed_sentence.append(eachSentence)
                 else:
                     # if the sentence does not have both product and reactants
@@ -216,14 +232,22 @@ def trim_negative_sentence(df, buffer=10):
 
 
 if __name__ == '__main__':
-    # test
-    df = pd.read_excel('../data/raw_data/positive_cleanup.xlsx',header=0)
-    trimmed_negative = trim_negative_sentence(df)
     
-    with open('positive_sentence_trimmed.csv','wb') as myfile:
+    # test
+    trimmed_sentence = []
+    with open('../data/identified_chemical_negative.csv','rb') as myfile:
+        thisReader = csv.reader(myfile)
+        for eachLine in thisReader:
+            this_token = _tokenize_sentence(eachLine)
+            this_trimmed_token = _trimming(this_token, buffer = 8)
+            trimmed_sentence.append(this_trimmed_token)
+    
+    # write to file
+    with open('../data/trimmed_indentified_chemical_negative.csv','wb') as myfile:
         thisWriter = csv.writer(myfile)
-        for eachSen in trimmed_negative:
-            thisWriter.writerow([eachSen])
+        for eachSen in trimmed_sentence:
+            thisWriter.writerow(eachSen)
+            
     
 
     
