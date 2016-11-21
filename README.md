@@ -7,4 +7,5 @@ author: runsheng song and yiting ju
 
 _______________________________________
 
-latest update and data in /experiment
+The negative data sample is ready.
+Now waiting for hidding the chemical names in the positive sample.
