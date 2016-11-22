@@ -88,9 +88,6 @@ def _clean_up_wiki_sentence(input_sentence):
         
     return ' '.join(sentence_list)  
 
-def _clean_up_sentence(input_sentence):
-    pass
-
 def _trimming(token_sentence, buffer=5):
     '''
     take the sentence between the first and last occurance of 'chem'
@@ -162,7 +159,7 @@ def _tokenize_sentence(input_sentence):
         
     return token_sentence
     
-def trim_positive_sentence(df, buffer=10):
+def trim_sentence(df, buffer=10):
     '''
     this function trim the sentence to only get the words between each pair
     plus few words before and after each pair (depends on the buffer)
@@ -194,48 +191,30 @@ def trim_positive_sentence(df, buffer=10):
                 break
     return trimmed_sentence
 
-def trim_negative_sentence(df, buffer=10):
+def prepare_single_sentence(input_sentence, buffer=8):
     '''
-    this function trim the sentence to only get the words between each pair
-    plus few words before and after each pair (depends on the buffer)
+    API for converting and cleaning up a single sentence to trimmed sentence
+    Input: a string of sentence
+    Return: a tokenized clean up sentence
+    steps: 1). tokenize sentence and clean them up
+           2). hide chemical name by Yiting's API.
+           3). Trim the sentence depends on the location of the word 'chem' 
+    '''
     
-    return a list of chemicals
-    '''
-    trimmed_sentence = []
-    count = 0
-    for eachRow in df.iterrows():
-        count +=1
-        this_product = eachRow[1][0].strip()
-        this_reactant = eachRow[1][1].strip()
-        all_sentences = eachRow[1][2:]
-        print count
-        
-        for eachSentence in all_sentences:
-            if not pd.isnull(eachSentence): # check if a cell in pandas is not nan
-
-#                 eachSentence = eachSentence.encode('ascii','ignore')
-
-                # check if each sentence contains both the reactants and products
-                if this_product in eachSentence:
-                    eachSentence = _replace_chem_name(eachSentence, this_product)
-
-                    eachSentence = _tokenize_sentence(eachSentence, buffer=buffer)
-                    eachSentence = ' '.join(eachSentence) # join it back to be a sentence
-                    trimmed_sentence.append(eachSentence)
-                else:
-                    # if the sentence does not have both product and reactants
-                    continue
-            else:
-                # break for null sentence, indicating the end of this line
-                break
-    return trimmed_sentence
-
+    # tokenize and clean up
+    token_sentence = _tokenize_sentence(input_sentence)
+    
+    # hide chemical name
+    
+    # trim the sentence
+    trimmed_token_sentence = _trimming(token_sentence, buffer=buffer)
+    return trimmed_token_sentence
 
 if __name__ == '__main__':
     
     # test
     trimmed_sentence = []
-    with open('../data/identified_chemical_negative.csv','rb') as myfile:
+    with open('../data/identified_chemical_positive.csv','rb') as myfile:
         thisReader = csv.reader(myfile)
         for eachLine in thisReader:
             this_token = _tokenize_sentence(eachLine)
@@ -243,7 +222,7 @@ if __name__ == '__main__':
             trimmed_sentence.append(this_trimmed_token)
     
     # write to file
-    with open('../data/trimmed_indentified_chemical_negative.csv','wb') as myfile:
+    with open('../data/trimmed_indentified_chemical_positive.csv','wb') as myfile:
         thisWriter = csv.writer(myfile)
         for eachSen in trimmed_sentence:
             thisWriter.writerow(eachSen)
