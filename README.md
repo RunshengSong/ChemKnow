@@ -12,11 +12,11 @@ Now waiting for hidding the chemical names in the positive sample.
 
 ---------------------------------------
 TO DO:
-1. Finish the website for the demo.
+1.Finish the website for the demo.
 check: http://www.lasige.di.fc.ul.pt/webtools/iice/
 
-/n2. Finish the chemical name inditification API
+2.Finish the chemical name inditification API
 Maybe need to use the chemispider API to check chemical name.
 
-/n3. Try different word embedding methods and predictive model.
+3.Try different word embedding methods and predictive model.
 Try word2vec and logistic regression model. Have time to try ANNs?
