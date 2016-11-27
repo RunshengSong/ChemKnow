@@ -78,7 +78,7 @@ if __name__ == '__main__':
     neg_file = '../data/trimmed_indentified_chemical_negative.csv'
 
     x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.35)
-    thisClf = CreateClassifier(RandomForestClassifier(n_estimators=10), CountVectorizer())
+    thisClf = CreateClassifier(RandomForestClassifier(n_estimators=10), CountVectorizer(ngram_range=(1,3)))
     trn_feature, tst_feature = thisClf.fit_vec(x_trn, x_tst)
     thisClf.train(trn_feature, y_trn)
     thisClf.score(tst_feature, y_tst)
