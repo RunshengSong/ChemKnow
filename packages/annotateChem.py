@@ -44,9 +44,9 @@ class annotateChem:
 		for string in listOfString:
 			if self.annotate(string) == 1:
 				annotatedSent.append("chem")
-				identifiedChemSet.add(string)
+				identifiedChemSet.add(string.lower().strip())
 			else:
-				annotatedSent.append(string)
+				annotatedSent.append(string.lower().strip())
 		return annotatedSent, list(identifiedChemSet)
 
 
@@ -128,7 +128,7 @@ def parseRespJson_wReplace(respJson, text):
 		denotatedChemicals = []
 		for denotation in reversed(denotations):
 			chemicalName = text[int(denotation["span"]["begin"]):int(denotation["span"]["end"])]
-			identifiedChemSet.add(chemicalName)
+			identifiedChemSet.add(chemicalName.lower().strip())
 			# if chemicalName == product:
 			# 	chemicalName = "CHEMICAL"
 			# elif chemicalName == reactant:
