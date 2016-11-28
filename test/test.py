@@ -3,11 +3,8 @@ Created on Nov 15, 2016
 
 @author: rsong_admin
 '''
-import nltk
-import re
 
+import sys
+sys.path.append('../packages')
 
-sentence = 'important epoxy resins are produced from combining epichlorohydrin and bisphenol a to give bisphenol a diglycidyl ethers.'
-token = sentence.split()
-
-print  token.index('epoxy')
+import modelling_tools as mt

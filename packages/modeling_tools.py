@@ -15,7 +15,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
-from pygments.lexer import this
+
 
 def create_random_forest_model(positive_file, negative_file):
     '''
@@ -41,9 +41,11 @@ class CreateClassifier:
         self.model.fit(trn_feature, y_trn)
         print 'model trained'
     
-    def score(self,tst_feature, y_tst):
+    def evaluate(self,tst_feature, y_tst):
+ 
         pred = self.model.predict(tst_feature)
         print metrics.confusion_matrix(y_tst, pred)
+        print metrics.classification_report(y_tst, pred)
         print metrics.classification.accuracy_score(y_tst,pred)
     
     def fit_vec(self,trn_sen,tst_sen):
@@ -52,11 +54,19 @@ class CreateClassifier:
         tst_feature = self.vec.transform(tst_sen).toarray()
         return trn_feature, tst_feature
     
+    def score(self, input_sentence):
+        '''
+        classify if a sentence is true or false
+        '''
+        trimmed_sentence = dp.prepare_single_sentence(input_sentence)
+        sentence_feature = self.vec.transform(trimmed_sentence)
+        return self.model.predict_proba(sentence_feature)[0]
+    
     def save_model(self, file_path):
         return joblib.dump(self,file_path, compress=True)
     
     @staticmethod
-    def from_file(file_path):
+    def load_file(file_path):
         return joblib.load(file_path)
 
 class ScoreSentence:
@@ -69,19 +79,39 @@ class ScoreSentence:
         classify if a sentence is true or false
         '''
         trimmed_sentence = dp.prepare_single_sentence(input_sentence)
-        sentence_feature = self.feature_generator.transform(trimmed_sentence)
-        return self.model.predict_proba(sentence_feature)[0]
+        trimmed_sentence = ' '.join(trimmed_sentence)
+        sentence_feature = self.feature_generator.transform([trimmed_sentence]).toarray()
+        return self.model.predict(sentence_feature)[0]
+    
+    def save_model(self, file_path):
+        return joblib.dump(self,file_path, compress=True)
+    
+    @staticmethod
+    def load_model(file_path):
+        # load model from file
+        return joblib.load(file_path)
+        
 
 if __name__ == '__main__':
     # test
     pos_file = '../data/trimmed_indentified_chemical_positive.csv'
-    neg_file = '../data/trimmed_indentified_chemical_negative.csv'
+    neg_file = '../data/trimmed_indentified_chemical_negative_1000.csv'
+    
+    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.25)
 
-    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.35)
-    thisClf = CreateClassifier(RandomForestClassifier(n_estimators=10), CountVectorizer(ngram_range=(1,3)))
+    thisClf = CreateClassifier(RandomForestClassifier(n_estimators=20), CountVectorizer(ngram_range=(1,1)))
     trn_feature, tst_feature = thisClf.fit_vec(x_trn, x_tst)
+
     thisClf.train(trn_feature, y_trn)
-    thisClf.score(tst_feature, y_tst)
+    thisClf.evaluate(tst_feature, y_tst)
+    
+    # score sentence
+    input_sentence = 'we make bben based on chemcc'
+     
+    thisScore = ScoreSentence(thisClf.model,thisClf.vec)
+    thisScore.save_model('../models/random_forest_0_0_1127')
+    
+    
 
     
     

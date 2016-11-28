@@ -133,8 +133,8 @@ def _tokenize_sentence(input_sentence):
     # remove punctunation
     input_sentence = " ".join("".join([" " if ch in string.punctuation else ch for ch in input_sentence]).split()) 
     
-    input_sentence = input_sentence.decode('utf-8','ignore')
-    token_sentence = nltk.word_tokenize(input_sentence.decode('utf-8')) # tokenize the sentence
+#     input_sentence = input_sentence.decode('utf-8')
+    token_sentence = nltk.word_tokenize(input_sentence) # tokenize the sentence
     
     # convert each element to string
     [x.encode('utf-8') for x in token_sentence]
@@ -203,7 +203,7 @@ def prepare_single_sentence(input_sentence, buffer=8):
     
     # tokenize and clean up
     token_sentence = _tokenize_sentence(input_sentence)
-    
+
     # hide chemical name
     
     # trim the sentence
