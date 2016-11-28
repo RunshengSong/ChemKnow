@@ -191,7 +191,7 @@ def trim_sentence(df, buffer=10):
                 break
     return trimmed_sentence
 
-def prepare_single_sentence(input_sentence, buffer=8):
+def prepare_single_sentence(input_sentence, chemspider_api, buffer=8, hide_chem=True):
     '''
     API for converting and cleaning up a single sentence to trimmed sentence
     Input: a string of sentence
@@ -200,15 +200,21 @@ def prepare_single_sentence(input_sentence, buffer=8):
            2). hide chemical name by Yiting's API.
            3). Trim the sentence depends on the location of the word 'chem' 
     '''
-    
+    chemical_names = []
     # tokenize and clean up
     token_sentence = _tokenize_sentence(input_sentence)
-
-    # hide chemical name
     
+    
+    print token_sentence
+    raw_input()
+    # hide chemical name
+    if hide_chem == True:
+        print 'running chemspider API to hide the chemical names...'
+        token_sentence, chemical_names = chemspider_api.annotateSent(token_sentence)
+        
     # trim the sentence
     trimmed_token_sentence = _trimming(token_sentence, buffer=buffer)
-    return trimmed_token_sentence
+    return trimmed_token_sentence, chemical_names
 
 if __name__ == '__main__':
     
