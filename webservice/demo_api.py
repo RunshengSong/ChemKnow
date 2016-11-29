@@ -46,7 +46,7 @@ def run_predict_on_text(input_text, input_chemical_name ,model=current_model, fi
     identified_chems = []
     for eachSen in zen.sentences:
         eachSen = eachSen.lower()
-        print str(eachSen)
+        print eachSen.strip()
         # check if the chemical exist in this sentence, reduce the run time of chemspider
         word_in_this_sen = _findWholeWord(input_chemical_name)(str(eachSen))
         if word_in_this_sen:
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     # find_chem_name = True if you want to hide and detect chemical names
     this_sen, this_chems = run_predict_on_text(text,input_chemical_name='benzene', 
                                                model=current_model, 
-                                               find_chem_name=True)        
+                                               find_chem_name=False)        
     print this_sen, this_chems
 
 #     input_sentence = 'chem prepared commercially reaction chem gas acidic solid catalyst chem although impractical prepared reaction methyl'

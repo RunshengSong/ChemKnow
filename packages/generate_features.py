@@ -29,6 +29,7 @@ def load_pos_neg_samples(pos_file, neg_file, test_size=0.25):
         thisReader = csv.reader(myfile)
         for eachLine in thisReader:
             eachLine = " ".join(eachLine)
+            eachLine = eachLine.strip()
             samples.append(eachLine)
             labels.append(1)
     
@@ -37,6 +38,7 @@ def load_pos_neg_samples(pos_file, neg_file, test_size=0.25):
         thisReader = csv.reader(myfile)
         for eachLine in thisReader:
             eachLine = " ".join(eachLine)
+            eachLine = eachLine.strip()
             samples.append(eachLine)
             labels.append(0)
     

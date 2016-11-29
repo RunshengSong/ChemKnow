@@ -16,6 +16,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 import sklearn.metrics as metrics
 
+import csv
+
 
 def create_random_forest_model(positive_file, negative_file):
     '''
@@ -52,6 +54,7 @@ class CreateClassifier:
         self.vec.fit(trn_sen)
         trn_feature = self.vec.transform(trn_sen).toarray()
         tst_feature = self.vec.transform(tst_sen).toarray()
+
         return trn_feature, tst_feature
     
     def score(self, input_sentence):
@@ -91,23 +94,46 @@ class ScoreSentence:
         # load model from file
         return joblib.load(file_path)
         
+def count_word_freq(vec, trn_feature):
+    '''
+    count the feature (word) frequency
+    '''
+    this_res = zip(vec.get_feature_names(),np.asarray(trn_feature.sum(axis=0)).ravel())
+    
+    with open('word_freq.csv','wb') as out:
+        csv_out=csv.writer(out)
+        csv_out.writerow(['name','num'])
+        for row in this_res:
+            csv_out.writerow(row)
 
 if __name__ == '__main__':
     # test
-    pos_file = '../data/trimmed_indentified_chemical_positive.csv'
-    neg_file = '../data/trimmed_indentified_chemical_negative_1000.csv'
+    pos_file = '../data/trimmed_indentified_chemical_positive_1128.csv'
+    neg_file = '../data/trimmed_indentified_chemical_negative_1128_1000.csv'
     
-    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.25)
-
-    thisClf = CreateClassifier(RandomForestClassifier(n_estimators=20), CountVectorizer(ngram_range=(1,1)))
+    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.1)
+    
+    # feature generator
+    feature_generator = CountVectorizer()
+    
+    # random forest model
+    rdf_clf = RandomForestClassifier(n_estimators=20)
+    
+    # set up the model
+    thisClf = CreateClassifier(rdf_clf, feature_generator)
+    
     trn_feature, tst_feature = thisClf.fit_vec(x_trn, x_tst)
-
+    
+    count_word_freq(thisClf.vec, trn_feature)
+  
+    # training
     thisClf.train(trn_feature, y_trn)
     thisClf.evaluate(tst_feature, y_tst)
     
     # score sentence
     input_sentence = 'we make bben based on chemcc'
-     
+    
+    # save model
     thisScore = ScoreSentence(thisClf.model,thisClf.vec)
     thisScore.save_model('../models/random_forest_0_0_1127')
     

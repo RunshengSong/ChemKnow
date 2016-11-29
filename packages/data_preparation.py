@@ -5,6 +5,7 @@ Created on Nov 17, 2016
 '''
 import csv
 from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
 import csv
 import re
@@ -129,16 +130,15 @@ def _tokenize_sentence(input_sentence):
     
     Also stem the tokenized sentence
     '''
-    
+    steammer = WordNetLemmatizer()
     # remove punctunation
     input_sentence = " ".join("".join([" " if ch in string.punctuation else ch for ch in input_sentence]).split()) 
     
-#     input_sentence = input_sentence.decode('utf-8')
+    input_sentence = input_sentence.decode('utf-8','ignore')
     token_sentence = nltk.word_tokenize(input_sentence) # tokenize the sentence
     
     # convert each element to string
     [x.encode('utf-8') for x in token_sentence]
-    
     
     # remove stop words
     token_sentence = [word for word in token_sentence if word not in stopwords.words('english')]
@@ -151,7 +151,9 @@ def _tokenize_sentence(input_sentence):
     
     # remove ???
     token_sentence = [word for word in token_sentence if not ('?' in word)]
- 
+    
+    # stem sentence
+    token_sentence = [steammer.lemmatize(word) for word in token_sentence]
         # remove chemical formula here
 
     # trim sentence, get only the part between the first and the last occurance of 'chem'
@@ -203,10 +205,7 @@ def prepare_single_sentence(input_sentence, chemspider_api, buffer=8, hide_chem=
     chemical_names = []
     # tokenize and clean up
     token_sentence = _tokenize_sentence(input_sentence)
-    
-    
-    print token_sentence
-    raw_input()
+
     # hide chemical name
     if hide_chem == True:
         print 'running chemspider API to hide the chemical names...'
@@ -217,7 +216,6 @@ def prepare_single_sentence(input_sentence, chemspider_api, buffer=8, hide_chem=
     return trimmed_token_sentence, chemical_names
 
 if __name__ == '__main__':
-    
     # test
     trimmed_sentence = []
     with open('../data/identified_chemical_positive.csv','rb') as myfile:
@@ -228,7 +226,7 @@ if __name__ == '__main__':
             trimmed_sentence.append(this_trimmed_token)
     
     # write to file
-    with open('../data/trimmed_indentified_chemical_positive.csv','wb') as myfile:
+    with open('../data/trimmed_indentified_chemical_positive_1128.csv','wb') as myfile:
         thisWriter = csv.writer(myfile)
         for eachSen in trimmed_sentence:
             thisWriter.writerow(eachSen)
