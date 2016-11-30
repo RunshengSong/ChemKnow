@@ -13,3 +13,5 @@ Now waiting for hidding the chemical names in the positive sample.
 ---------------------------------------
 TO DO:
 
+clean up codes in both font-end and flask server
+
