@@ -11,6 +11,7 @@ import generate_features as gf
 import data_preparation as dp
 
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
@@ -111,13 +112,14 @@ if __name__ == '__main__':
     pos_file = '../data/trimmed_indentified_chemical_positive_1128.csv'
     neg_file = '../data/trimmed_indentified_chemical_negative_1128_1000.csv'
     
-    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.1)
+    x_trn, x_tst, y_trn, y_tst = gf.load_pos_neg_samples(pos_file, neg_file, test_size=0.2)
     
     # feature generator
-    feature_generator = CountVectorizer()
+    feature_generator = CountVectorizer(ngram_range=(1,1))
     
     # random forest model
     rdf_clf = RandomForestClassifier(n_estimators=20)
+    lg_regression = LogisticRegression(C=1e5)
     
     # set up the model
     thisClf = CreateClassifier(rdf_clf, feature_generator)
@@ -125,7 +127,7 @@ if __name__ == '__main__':
     trn_feature, tst_feature = thisClf.fit_vec(x_trn, x_tst)
     
     count_word_freq(thisClf.vec, trn_feature)
-  
+    
     # training
     thisClf.train(trn_feature, y_trn)
     thisClf.evaluate(tst_feature, y_tst)
