@@ -5,6 +5,8 @@ This is the course project repo for cs273@ucsb
 
 author: runsheng song and yiting ju
 
+project demo:
+http://www.geog.ucsb.edu/~yju/directory/Doc2ChemReaction/#
 _______________________________________
 
 The negative data sample is ready.
