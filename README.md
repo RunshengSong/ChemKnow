@@ -10,8 +10,8 @@ email:yiting.ju@gmail.com
 project demo:
 http://www.geog.ucsb.edu/~yju/directory/Doc2ChemReaction/#
 
-*packages: Model codes__ 
-*models: trained model__
-*webservice: API for demo__
-*html:website code for demo__
-*data:training and testing data__
+*packages: Model codes<br />
+*models: trained model<br />
+*webservice: API for demo<br />
+*html:website code for demo<br />
+*data:training and testing data<br />
