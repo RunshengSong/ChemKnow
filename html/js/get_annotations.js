@@ -2,7 +2,8 @@
  * Created by Andre on 13/07/2015.
  */
 
-var API_URL = "http://localhost:5000/annotate"
+// var API_URL = "http://localhost:5000/annotate"
+var API_URL = "http://128.111.106.236:5000/annotate"  // stko's student-proj.geog.ucsb.edu
 
 
 function makeid(){
@@ -87,16 +88,13 @@ function process(){
 
     $.ajax({
         url: API_URL,
-        type: 'POST',
-        headers: {'Access-Control-Allow-Origin': 'http://localhost'},
-        //dataType: "html",
+        method: 'POST',
         data: {text: $('#inputtext').val(),
                 chem: $('#inputChem').val(),
                 hideChem: hidingChem},
         error: function (xhr, ajaxOptions, thrownError) {
             $('#progress').text("Server Error");
-        },
-        cache: false
+        }
     })
         .done(function( msg ) {
             $("#submitbutton").text("Analyze")
