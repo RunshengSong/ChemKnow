@@ -8,7 +8,7 @@ email: runsheng@umail.ucsb.edu
 email:yiting.ju@gmail.com
 
 project demo:
-http://www.geog.ucsb.edu/~yju/directory/Doc2ChemReaction/#
+http://geog.ucsb.edu/~yju/directory/Txt2ChemReaction/
 
 *packages: Model codes<br />
 *models: trained model<br />
