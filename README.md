@@ -1,7 +1,6 @@
-# cs273
+# chemical relation extraction from large industry report
 
 _______________________________________
-This is the course project repo for cs273@ucsb
 
 author: runsheng song and yiting ju
 email: runsheng@umail.ucsb.edu
