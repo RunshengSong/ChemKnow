@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import requests
 from chemspipy import ChemSpider
 from pyjarowinkler import distance
 import urllib2, time, sys, getopt, json, csv
@@ -14,12 +15,11 @@ class annotateChem:
 		# print "in class"
 		self.cs = ChemSpider(CS_TOKEN)
 
-
-	"""
-		Annotate the searchText. 
-		  Return 1 if it is a chemical name; otherwise, return 0
-	"""
 	def annotate(self, searchText):
+		"""
+		Annotate the searchText. 
+	  	Return 1 if it is a chemical name; otherwise, return 0
+		"""
 		resultList = self.cs.search(searchText)
 		match = 0
 		if len(resultList) >= 3:
@@ -33,12 +33,14 @@ class annotateChem:
 				match = 1
 		return match
 	
+	def annotateMER(self, searchTxt):
+		return requests.get("http://labs.fc.ul.pt/mer/api.php?lexicon=chemical&text=" + searchTxt).text
 
-	"""
-		Annotate the sent 
-		  Return a list of strings with identified chemicals replaced by "chem"
-	"""
 	def annotateSent(self, listOfString):
+		"""
+		Annotate the sent 
+		Return a list of strings with identified chemicals replaced by "chem"
+		"""
 		annotatedSent = []
 		identifiedChemSet = set()
 		for string in listOfString:
@@ -166,7 +168,9 @@ if __name__ == "__main__":
 		script to call tmChem to annotate a sentence (a list of words in the sentence)
 		  return with a list of words of this sentence with chemical names replaced with "chem"
 	"""
-	annotatedSent, chemicals = identifyChem_wReplace(sent)
-	annotatedSentList = annotatedSent.split(' ')
-	print " ".join(annotatedSentList)
-	print chemicals
+# 	annotatedSent, chemicals = identifyChem_wReplace(sent)
+# 	annotatedSentList = annotatedSent.split(' ')
+# 	print " ".join(annotatedSentList)
+# 	print chemicals
+	this_annot = annotateChem()
+	print this_annot.annotateMER(sent)

@@ -134,7 +134,7 @@ def _tokenize_sentence(input_sentence):
     # remove punctunation
     input_sentence = " ".join("".join([" " if ch in string.punctuation else ch for ch in input_sentence]).split()) 
     
-    input_sentence = input_sentence.decode('utf-8','ignore')
+#     input_sentence = input_sentence.decode('utf-8','ignore')
     token_sentence = nltk.word_tokenize(input_sentence) # tokenize the sentence
     
     # convert each element to string

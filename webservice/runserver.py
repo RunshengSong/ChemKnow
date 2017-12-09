@@ -1,24 +1,28 @@
-from flask import Flask, request, redirect, jsonify, url_for, g, make_response, current_app
+'''
+Created on Jan 22, 2017
+
+API for the webservice API
+
+@author: Yiting & Runsheng
+'''
+import sys
 import copy
 import time, os, csv
-from flask_cors import CORS, cross_origin
-from annotateChem import annotateChemCS
-from txt2ChemReaction import run_predict_on_text
 from subprocess import Popen
 from datetime import timedelta
 from functools import update_wrapper
 
+from flask_cors import CORS, cross_origin
+from flask import Flask, request, redirect, jsonify, url_for, g, make_response, current_app
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from packages.chemical_name_identifier.annotateChem import *
+from webservice.txt2ChemReaction import *
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
-
-
-
-current_dir_path = os.path.dirname(os.path.realpath(__file__))
-
-
-
 
 def crossdomain(origin=None, methods=None, headers=None,
 				max_age=21600, attach_to_all=True,
@@ -62,16 +66,10 @@ def crossdomain(origin=None, methods=None, headers=None,
 		return update_wrapper(wrapped_function, f)
 	return decorator
 
-
-
-
-
-
-
 @app.route('/annotate', methods=['POST','GET'])
 @crossdomain(origin='*')
 # @cross_origin()
-def run_exposure():
+def run_ChemKnow():
 	if request.method == 'POST':
 		print "post in"
 		text = request.form['text']
@@ -86,7 +84,7 @@ def run_exposure():
 		print "Hide Chemical Name? ", hideChem
 
 		try:
-			callPopen("python txt2ChemReaction.py " + "\""+ text +"\" " + targetChem + " " + str(hideChem))
+			callPopen("python webservice/txt2ChemReaction.py " + "\""+ text +"\" " + targetChem + " " + str(hideChem))
 
 			sentList, chemList = readResultFromCSV(os.path.join(current_dir_path, "theResult.csv"))
 
@@ -188,13 +186,6 @@ def run_exposure():
 				}})
 		pass
 
-
-
-
-
-
-
-
 def callPopen(command):
 	print "Calling", command
 	print current_dir_path
@@ -209,7 +200,6 @@ def callPopen(command):
 
 	except IOError as (errno,strerror):
 		print "I/O error({0}): {1}".format(errno, strerror)
-
 
 def readResultFromCSV(csvFilePath):
 	with open(csvFilePath, "rb") as csvfile:

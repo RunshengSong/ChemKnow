@@ -13,21 +13,19 @@ import re, traceback
 from textblob import TextBlob
 
 # append packages
-current_dir_path = path.dirname(path.realpath(__file__))
-sys.path.append(path.join(path.dirname(current_dir_path),"packages"))
+current_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(current_dir_path)
 
-from modeling_tools import ScoreSentence
-from annotateChem import annotateChemCS
+from packages.modeling_tools import *
+from packages.chemical_name_identifier.annotateChem import *
 
-current_model = path.join(current_dir_path,'random_forest_0_0_1128')
-
+current_model = path.join(current_dir_path, "models", 'random_forest_0_0_1128')
 
 def _findWholeWord(w):
 	'''
 	if w in the sentence following this function
 	'''
 	return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
-
 
 def run_predict_on_text(input_text, input_chemical_name ,model=current_model, find_chem_name=True):
 	'''
@@ -47,7 +45,7 @@ def run_predict_on_text(input_text, input_chemical_name ,model=current_model, fi
 		zen = TextBlob(input_text)
 		input_chemical_name = input_chemical_name.lower()
 		
-		chemspider_api = annotateChemCS()
+		chemspider_api = annotateChem()
 		
 		identified_sen = []
 		identified_chems = []
@@ -57,7 +55,7 @@ def run_predict_on_text(input_text, input_chemical_name ,model=current_model, fi
 			# check if the chemical exist in this sentence, reduce the run time of chemspider
 			word_in_this_sen = _findWholeWord(input_chemical_name)(str(eachSen))
 			if word_in_this_sen:
-				thisScore, thisNames = thisModel.score(eachSen,chem_spy_api=chemspider_api,hide_chem_name=find_chem_name)
+				thisScore, thisNames = thisModel.score(eachSen, chem_spy_api=chemspider_api, hide_chem_name = find_chem_name)
 				if thisScore == 1 and word_in_this_sen:
 					identified_sen.append(str(eachSen)) # append the sentence to outputs
 					# append chemical name if it is not in the existing list:
@@ -82,14 +80,12 @@ def writeCSV(sentList, chemList):
 		spamwriter.writerow(sentList)
 		spamwriter.writerow(chemList)
 
-
-
 if __name__ == '__main__':
 	# test
-	text = str(sys.argv[1])
-	chemical = str(sys.argv[2])
-	hideChemName = str(sys.argv[3])
-	# find_chem_name = str(sys.argv[2])
+ 	text = str(sys.argv[1])
+ 	chemical = str(sys.argv[2])
+ 	hideChemName = str(sys.argv[3])
+	find_chem_name = str(sys.argv[2])
 	print "In classifier..."
 	# print text
 	# print chemical
@@ -99,18 +95,18 @@ if __name__ == '__main__':
 		hideChemName = False
 	# print hideChemName
 	
-	# text = 'Toluene hydrodealkylation converts toluene to benzene. \
-	# 		In this hydrogen-intensive process, toluene is mixed with hydrogen, \
-	# 		then passed over a chromium, molybdenum, \
-	# 		or platinum oxide catalyst at 500–600 °C and 40–60 atm pressure.\
-	# 		Sometimes, higher temperatures are used instead of a catalyst (at the similar reaction condition).\
-	# 		In the 19th and early 20th centuries, benzene was used as an after-shave lotion because of its pleasant smell.\
-	# 		Trace amounts of benzene are found in petroleum and coal. '
+# 	text = 'Toluene hydrodealkylation converts toluene to benzene. \
+# 			In this hydrogen-intensive process, toluene is mixed with hydrogen, \
+# 			then passed over a chromium, molybdenum, \
+# 			or platinum oxide catalyst at 500–600 °C and 40–60 atm pressure.\
+# 			Sometimes, higher temperatures are used instead of a catalyst (at the similar reaction condition).\
+# 			In the 19th and early 20th centuries, benzene was used as an after-shave lotion because of its pleasant smell.\
+# 			Trace amounts of benzene are found in petroleum and coal. '
 	
 	# find_chem_name = True if you want to hide and detect chemical names
-	this_sen, this_chems = run_predict_on_text(text, input_chemical_name=chemical,
+	this_sen, this_chems = run_predict_on_text(text, input_chemical_name="Benzene",
 											   model=current_model, 
-											   find_chem_name=hideChemName)        
+											   find_chem_name=True)        
 	print this_sen, this_chems
 	writeCSV(this_sen, this_chems)
 

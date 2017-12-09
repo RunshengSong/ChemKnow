@@ -1,21 +1,19 @@
-from flask import Flask, request, redirect, jsonify, url_for, g, make_response, current_app
+import sys
 import copy
 import time, os
+
 from flask_cors import CORS, cross_origin
-from annotateChem import annotateChem
+from flask import Flask, request, redirect, jsonify, url_for, g, make_response, current_app
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from packages.chemical_name_identifier.annotateChem import *
 app = Flask(__name__)
 CORS(app)
 
-
-
-
-
 @app.route('/annotate', methods=['POST','GET'])
 @cross_origin()
-def run_exposure():
-	print "Start running Exposure Module"
+def run_annotate():
 	if request.method == 'POST':
 		print "post in"
 		text = request.form['text']
