@@ -6,6 +6,9 @@ API for the webservice API
 @author: Yiting & Runsheng
 '''
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import copy
 import time, os, csv
 from subprocess import Popen
@@ -18,7 +21,9 @@ from flask import Flask, request, redirect, jsonify, url_for, g, make_response, 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from packages.chemical_name_identifier.annotateChem import *
-from webservice.txt2ChemReaction import *
+from packages.txt2ChemReaction import *
+
+CURRENT_MODEL = path.join(current_dir_path, "models", 'random_forest_0_0_1128')
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -74,77 +79,21 @@ def run_ChemKnow():
 		print "post in"
 		text = request.form['text']
 		targetChem = request.form['chem']
-		hideChem = request.form['hideChem']
-		if str(hideChem) == "1":
-			hideChem = True
-		else:
-			hideChem = False
+		hideChem = bool(request.form['hideChem'])
+
 		print "Text: ",text
 		print "Target Chemical: ", targetChem
 		print "Hide Chemical Name? ", hideChem
 
 		try:
-			callPopen("python webservice/txt2ChemReaction.py " + "\""+ text +"\" " + targetChem + " " + str(hideChem))
-
-			sentList, chemList = readResultFromCSV(os.path.join(current_dir_path, "theResult.csv"))
-
-			# annotateChem_ins = annotateChem()
-			# print "222"
-			# apiResponse = annotateChem_ins.annotate(text)
-			# if apiResponse == 1:
-			# 	annotateResult = 1
-			# elif apiResponse == 0:
-			# 	annotateResult = 0
-			# else:
-			# 	print "Something is wrong in the class..."
-			# this_sen, this_chems = run_predict_on_text(text, input_chemical_name=targetChem, find_chem_name=hideChem)        
-			# print this_sen, this_chems
-			# printName("RomaBoy")
-
-
-		except Exception,e:
-			print str(e)
-
-		else:
-			# return jsonify({'results':  {
-			#     'exposure': "111",
-			#     'result': {"in":343}
-			#     }})
+			sentList, chemList = run_predict_on_text(text, targetChem, CURRENT_MODEL, hideChem)
+			print chemList
 			return jsonify({"results": {
 				"sentList": sentList,
 				"chemList": chemList
 				}})
-
-		# # print type(request.form['qsar'])
-
-		# qsar_result = {'qsar': request.form['qsar']}
-		# fat_result = {'fat': request.form['fat']} 
-		# print qsar_result['qsar']
-		# print fat_result['fat']
-		# """qsar_result and fat_result are the file path to the qsar_summary.json and sample_raw_output.csv on the server"""
-		# try:
-		#     expos_start_time = time.time()
-		#     exposure_ins = Exposure()            
-
-		#     expos_summary_json = exposure_ins.run(qsar_json_file_path=qsar_result['qsar'], 
-		#         ft_csv_file_path=fat_result['fat'],
-		#         place="LA",
-		#         outputFilePath=os.path.join(exposure_ins.results_folder, "exposure_results.json"))
-
-		#     print("--- Exposure Module finished in %s seconds ---" % (time.time() - expos_start_time))
-
-		#     exposure_ins_results = os.path.join(exposure_ins.results_folder, "exposure_results.json")
-
-		# except ModuleError:
-		#     return jsonify()
-
-		# else:
-		#     return jsonify({'results':  {
-		#         'exposure': exposure_ins_results,
-		#         'result': expos_summary_json
-		#         }})
-		
-		# return request.form['fat']
+		except Exception,e:
+			print str(e)
 	elif request.method == "GET":
 		print "get"
 		text = request.args.get('text')

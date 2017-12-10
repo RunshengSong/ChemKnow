@@ -78,11 +78,11 @@ class ScoreSentence:
         self.model = input_model
         self.feature_generator = feature_generator
     
-    def score(self, input_sentence, chem_spy_api = None ,hide_chem_name=True):
+    def score(self, input_sentence, hide_chem_name=True):
         '''
         classify if a sentence is true or false
         '''
-        trimmed_sentence, chemical_names = dp.prepare_single_sentence(input_sentence,chemspider_api=chem_spy_api, hide_chem=hide_chem_name)
+        trimmed_sentence, chemical_names = dp.prepare_single_sentence(input_sentence, hide_chem=hide_chem_name)
         trimmed_sentence = ' '.join(trimmed_sentence)
         sentence_feature = self.feature_generator.transform([trimmed_sentence]).toarray()
         return self.model.predict(sentence_feature)[0], chemical_names

@@ -10,7 +10,7 @@ from multiprocessing import Pool
 CS_TOKEN = "c751f22b-9f36-4830-a66c-cc6f50da6bd5"
 
 
-class annotateChem:
+class annotateChemSpider:
 	def __init__(self):
 		# print "in class"
 		self.cs = ChemSpider(CS_TOKEN)
@@ -33,10 +33,7 @@ class annotateChem:
 				match = 1
 		return match
 	
-	def annotateMER(self, searchTxt):
-		return requests.get("http://labs.fc.ul.pt/mer/api.php?lexicon=chemical&text=" + searchTxt).text
-
-	def annotateSent(self, listOfString):
+	def annotateChemSpider(self, listOfString):
 		"""
 		Annotate the sent 
 		Return a list of strings with identified chemicals replaced by "chem"
@@ -51,7 +48,33 @@ class annotateChem:
 				annotatedSent.append(string.lower().strip())
 		return annotatedSent, list(identifiedChemSet)
 
+class annotateMER:
+	def __init__(self):
+		pass
 
+	def annotate(self, searchTxt_list):
+		"""
+		Input is a tokenized sentence
+		find all chemical name from the sentence using MER API
+		return all chemicals in a list
+		"""
+		searchTxt = " ".join(searchTxt_list)
+		r = requests.get("http://labs.fc.ul.pt/mer/api.php?lexicon=chemical&text=" + searchTxt).text
+		r = [s.strip() for s in r.splitlines()]
+		r = [s.split("\t") for s in r] 
+		chemicals = [str(l[-1]) for l in r]
+		sent_hide_chem = self.__hide_chem(searchTxt, chemicals)
+		return sent_hide_chem, chemicals
+	
+	def __hide_chem(self, sent, chem_list):
+		"""
+		hide the chemical name to 'chem'
+		based on the list_idx
+		"""
+		for each_chem in chem_list:
+			sent = sent.replace(each_chem, "chem")
+		return sent
+	
 # Christopher P. Matthews
 # christophermatthews1985@gmail.com
 # Sacramento, CA, USA
@@ -70,10 +93,8 @@ def levenshtein(s, t):
 			cost = 0 if s[i] == t[j] else 1
 			v1[j + 1] = min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost)
 		for j in range(len(v0)):
-			v0[j] = v1[j]
-			
+			v0[j] = v1[j]		
 	return v1[len(t)]
-
 
 def identifyChem_wReplace(text):
 	PubTator_username = ''
@@ -172,5 +193,4 @@ if __name__ == "__main__":
 # 	annotatedSentList = annotatedSent.split(' ')
 # 	print " ".join(annotatedSentList)
 # 	print chemicals
-	this_annot = annotateChem()
-	print this_annot.annotateMER(sent)
+	print annotateMER.annotate(sent)

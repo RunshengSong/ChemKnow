@@ -3,17 +3,25 @@ Created on Nov 17, 2016
 
 @author: rsong_admin
 '''
+import os
+import re
+import sys
 import csv
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
-import csv
-import re
 import pandas as pd
 import numpy as np
 import nltk
 import string
 from nltk.corpus import wordnet
+# append packages
+current_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(current_dir_path)
+
+from packages.chemical_name_identifier.annotateChem import *
+
+ANNOTATOR = annotateMER()
 
 def _remove_plural(sentence, product, reactant):
     '''
@@ -75,7 +83,6 @@ def _clean_up_wiki_sentence(input_sentence):
     1. remove equations by lines
     2. remove title
     3. 
-    
     '''
     sentence_list = input_sentence.splitlines() # split the sentence by lines
 
@@ -98,14 +105,12 @@ def _trimming(token_sentence, buffer=5):
     '''
     first_idx = 0
     last_idx = len(token_sentence)
-    
     if token_sentence.count('chem') == 1:
         # if there is only one chem
         
         this_idx = token_sentence.index('chem')
         first_idx = max(0, this_idx - buffer)
         last_idx = min(this_idx + buffer, len(token_sentence))
-
     else:  
         # more than one or zero, the same 
         for idx, eachWord in enumerate(token_sentence):
@@ -193,7 +198,7 @@ def trim_sentence(df, buffer=10):
                 break
     return trimmed_sentence
 
-def prepare_single_sentence(input_sentence, chemspider_api, buffer=8, hide_chem=True):
+def prepare_single_sentence(input_sentence, buffer=8, hide_chem=True):
     '''
     API for converting and cleaning up a single sentence to trimmed sentence
     Input: a string of sentence
@@ -208,28 +213,34 @@ def prepare_single_sentence(input_sentence, chemspider_api, buffer=8, hide_chem=
 
     # hide chemical name
     if hide_chem == True:
-        print 'running chemspider API to hide the chemical names...'
-        token_sentence, chemical_names = chemspider_api.annotateSent(token_sentence)
-        
+#         token_sentence, chemical_names = this_chemSpider.annotateChemSpider(token_sentence)
+        print "hide"
+        # run MER API
+        token_sentence, chemical_names = ANNOTATOR.annotate(token_sentence)
     # trim the sentence
     trimmed_token_sentence = _trimming(token_sentence, buffer=buffer)
     return trimmed_token_sentence, chemical_names
 
 if __name__ == '__main__':
+    pass
     # test
-    trimmed_sentence = []
-    with open('../data/identified_chemical_positive.csv','rb') as myfile:
-        thisReader = csv.reader(myfile)
-        for eachLine in thisReader:
-            this_token = _tokenize_sentence(eachLine)
-            this_trimmed_token = _trimming(this_token, buffer = 8)
-            trimmed_sentence.append(this_trimmed_token)
-    
-    # write to file
-    with open('../data/trimmed_indentified_chemical_positive_1128.csv','wb') as myfile:
-        thisWriter = csv.writer(myfile)
-        for eachSen in trimmed_sentence:
-            thisWriter.writerow(eachSen)
+#     sent = "Toluene hydrodealkylation converts toluene to benzene."
+#     
+#     tok, names = prepare_single_sentence(sent, hide_chem=True)
+#     print tok, names
+#     trimmed_sentence = []
+#     with open('../data/identified_chemical_positive.csv','rb') as myfile:
+#         thisReader = csv.reader(myfile)
+#         for eachLine in thisReader:
+#             this_token = _tokenize_sentence(eachLine)
+#             this_trimmed_token = _trimming(this_token, buffer = 8)
+#             trimmed_sentence.append(this_trimmed_token)
+#     
+#     # write to file
+#     with open('../data/trimmed_indentified_chemical_positive_1128.csv','wb') as myfile:
+#         thisWriter = csv.writer(myfile)
+#         for eachSen in trimmed_sentence:
+#             thisWriter.writerow(eachSen)
             
     
 

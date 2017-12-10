@@ -3,5 +3,5 @@ encoding//experiment/try_wiki.py=utf-8
 encoding//packages/chemical_name_identifier/ChemNameIdentifier.py=utf-8
 encoding//packages/chemical_name_identifier/annotateChem.py=utf-8
 encoding//packages/crawler/get_data_from_wiki.py=utf-8
+encoding//packages/txt2ChemReaction.py=utf-8
 encoding//webservice/demo_api.py=utf-8
-encoding//webservice/txt2ChemReaction.py=utf-8
