@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import requests
 from chemspipy import ChemSpider
 from pyjarowinkler import distance
@@ -6,9 +10,7 @@ import urllib2, time, sys, getopt, json, csv
 import multiprocessing as mp
 from multiprocessing import Pool
 
-
 CS_TOKEN = "c751f22b-9f36-4830-a66c-cc6f50da6bd5"
-
 
 class annotateChemSpider:
 	def __init__(self):
@@ -59,6 +61,7 @@ class annotateMER:
 		return all chemicals in a list
 		"""
 		searchTxt = " ".join(searchTxt_list)
+		searchTxt = searchTxt.decode('latin-1').encode("utf-8")
 		r = requests.get("http://labs.fc.ul.pt/mer/api.php?lexicon=chemical&text=" + searchTxt).text
 		r = [s.strip() for s in r.splitlines()]
 		r = [s.split("\t") for s in r] 
@@ -74,10 +77,7 @@ class annotateMER:
 		for each_chem in chem_list:
 			sent = sent.replace(each_chem, "chem")
 		return sent
-	
-# Christopher P. Matthews
-# christophermatthews1985@gmail.com
-# Sacramento, CA, USA
+
 def levenshtein(s, t):
 	''' From Wikipedia article; Iterative with two matrix rows. '''
 	if s == t: return 0
@@ -102,7 +102,6 @@ def identifyChem_wReplace(text):
 	trigger = "tmChem"
 
 	#Submit
-
 	url_Submit = "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/RESTful/tmTool.cgi/" + trigger + "/Submit/"
 
 	InputSTR = '{"sourcedb":"PubMed","sourceid":"25421723","text":"' + text + '"}'
@@ -152,19 +151,8 @@ def parseRespJson_wReplace(respJson, text):
 		for denotation in reversed(denotations):
 			chemicalName = text[int(denotation["span"]["begin"]):int(denotation["span"]["end"])]
 			identifiedChemSet.add(chemicalName.lower().strip())
-			# if chemicalName == product:
-			# 	chemicalName = "CHEMICAL"
-			# elif chemicalName == reactant:
-			# 	chemicalName = "CHEMICAL"
-			# else:
-			# 	chemicalName = "CHEMICAL"
 			chemicalName = "chem"
 			text = text[:int(denotation["span"]["begin"])] + chemicalName + text[int(denotation["span"]["end"]):]
-			# chemicalObj = denotation["obj"]
-			# chemicalType = chemicalObj[:chemicalObj.find(":")]
-			# chemicalID = chemicalObj[chemicalObj.find(":")+1:]
-		# print text
-		# textList = text.split("|")
 		denotatedChemicals = text
 		return denotatedChemicals, list(identifiedChemSet)
 	else:
@@ -172,25 +160,5 @@ def parseRespJson_wReplace(respJson, text):
 
 
 if __name__ == "__main__":
-	sent = "butanol manufactured industrially hydration butene butene sulfuric acid used catalyst convension"
-
-	"""
-		script to call ChemSpider to annotate a sentence (a list of words in the sentence)
-		  return with a list of words of this sentence with chemical names replaced with "chem"
-	"""
-	# sentList = sent.split(" ")
-	# ac = annotateChem()
-	# annotatedSentList, chemicals = ac.annotateSent(sentList)
-	# print " ".join(annotatedSentList)
-	# print chemicals
-
-
-	"""
-		script to call tmChem to annotate a sentence (a list of words in the sentence)
-		  return with a list of words of this sentence with chemical names replaced with "chem"
-	"""
-# 	annotatedSent, chemicals = identifyChem_wReplace(sent)
-# 	annotatedSentList = annotatedSent.split(' ')
-# 	print " ".join(annotatedSentList)
-# 	print chemicals
-	print annotateMER.annotate(sent)
+	# test
+	pass

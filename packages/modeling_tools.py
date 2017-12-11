@@ -19,7 +19,6 @@ import sklearn.metrics as metrics
 
 import csv
 
-
 def create_random_forest_model(positive_file, negative_file):
     '''
     create the first predictive model

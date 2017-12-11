@@ -214,7 +214,6 @@ def prepare_single_sentence(input_sentence, buffer=8, hide_chem=True):
     # hide chemical name
     if hide_chem == True:
 #         token_sentence, chemical_names = this_chemSpider.annotateChemSpider(token_sentence)
-        print "hide"
         # run MER API
         token_sentence, chemical_names = ANNOTATOR.annotate(token_sentence)
     # trim the sentence

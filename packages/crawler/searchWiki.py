@@ -3,24 +3,28 @@
 '''
 Created on Nov 6, 2016
 
+experimental scripts for creating training data
+
 @author: runshengsong
 '''
-
-import pandas as pd
-import nltk
-import csv
 import re
+import csv
+import nltk
+import os, sys
+import pandas as pd
 import wikipedia as wiki
 from textblob import TextBlob
 from random import shuffle
-import data_preparation as dp
 
+current_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(current_dir_path)
+
+from packages import data_preparation as dp
 
 important_words = ['produced',
                    'manufactured',
                    'derivative',
                    'industrially']
-
 
 def get_positive_sentence_for_chem_in_list(list_excel, output_file_name):
     '''
@@ -29,9 +33,7 @@ def get_positive_sentence_for_chem_in_list(list_excel, output_file_name):
     
     This is the function for the positive sentences
     '''
-    
     df = pd.ExcelFile(list_excel,header=0).parse('Sheet1')
-    
     count = 0
     this_results_positive = []
 
@@ -41,8 +43,6 @@ def get_positive_sentence_for_chem_in_list(list_excel, output_file_name):
             count += 1
             this_product = eachRows[1]['Product'].lower()
             this_rect = eachRows[1]['Reactant'].lower()
-            
-            
             try:
                 this_page = wiki.WikipediaPage(this_product)
                 raw_text = this_page.content
@@ -146,28 +146,26 @@ def _search_wiki_match_name(product_name, reactant_name):
         else:
             print 'No'
 
-
-def search_wiki(chemical_name):
+def search_chem_name(chemical_name):
     '''
-    experiment
+    
     '''
     chemical_name = chemical_name.lower()
     this_page = wiki.WikipediaPage(chemical_name)
     
     raw_text = this_page.content
     zen = TextBlob(raw_text)
-    print zen
-
-            
-            
+    return zen
+     
 if __name__ == '__main__':
+#     pass
     # test
-    
-    list_excel = '../data/chemical_list.xlsx'
-    output_name = '../data/raw_data/negative_sentence_wiki.csv'
-    
-    get_negative_sentence_for_chem_in_list(list_excel, output_name)            
-        
+#     
+#     list_excel = '../data/chemical_list.xlsx'
+#     output_name = '../data/raw_data/negative_sentence_wiki.csv'
+#     
+#     get_negative_sentence_for_chem_in_list(list_excel, output_name)            
+    search_chem_name("benzene")  
         
     
     

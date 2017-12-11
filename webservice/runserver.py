@@ -84,7 +84,6 @@ def run_ChemKnow():
 		print "Text: ",text
 		print "Target Chemical: ", targetChem
 		print "Hide Chemical Name? ", hideChem
-
 		try:
 			sentList, chemList = run_predict_on_text(text, targetChem, CURRENT_MODEL, hideChem)
 			print chemList
@@ -168,9 +167,6 @@ def readResultFromCSV(csvFilePath):
 				print "Wrong in reading csv"
 			rowCounter += 1
 	return sentList, chemList
-
-
-
 
 if __name__ == '__main__':
 	app.run(debug = True, host='0.0.0.0', port=5022, use_reloader=True, threaded=True)
