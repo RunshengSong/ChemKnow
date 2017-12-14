@@ -19,7 +19,7 @@ from nltk.corpus import wordnet
 current_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(current_dir_path)
 
-from packages.chemical_name_identifier.annotateChem import *
+from chemical_name_identifier.annotateChem import *
 
 ANNOTATOR = annotateMER()
 
