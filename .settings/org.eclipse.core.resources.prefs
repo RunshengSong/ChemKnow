@@ -1,9 +1,4 @@
 eclipse.preferences.version=1
+encoding//ChemKnow/modules/txt2ChemReaction.py=utf-8
 encoding//experiment/try_wiki.py=utf-8
-encoding//packages/chemical_name_identifier/ChemNameIdentifier.py=utf-8
-encoding//packages/chemical_name_identifier/annotateChem.py=utf-8
-encoding//packages/crawler/bingSearch.py=utf-8
-encoding//packages/crawler/searchWiki.py=utf-8
-encoding//packages/search.py=utf-8
-encoding//packages/txt2ChemReaction.py=utf-8
-encoding//webservice/demo_api.py=utf-8
+encoding/demo.py=utf-8

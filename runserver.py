@@ -20,8 +20,8 @@ from flask import Flask, request, redirect, jsonify, url_for, g, make_response, 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from packages.chemical_name_identifier.annotateChem import *
-from packages.txt2ChemReaction import *
+from ChemKnow.modules.chemical_name_identifier.annotateChem import *
+from ChemKnow.modules.txt2ChemReaction import *
 
 CURRENT_MODEL = path.join(current_dir_path, "models", 'random_forest_0_0_1128')
 

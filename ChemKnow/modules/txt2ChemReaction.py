@@ -16,8 +16,8 @@ from textblob import TextBlob
 current_dir_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(current_dir_path)
 
-from packages.modeling_tools import *
-from packages.chemical_name_identifier.annotateChem import *
+from modeling_tools import *
+from chemical_name_identifier.annotateChem import *
 
 CURRENT_MODEL = path.join(current_dir_path, "models", 'random_forest_0_0_1128')
 
