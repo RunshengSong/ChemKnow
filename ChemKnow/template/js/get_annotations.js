@@ -3,7 +3,7 @@
  */
 
 // var API_URL = "http://localhost:5000/annotate"
-var API_URL = "http://54.153.0.195:5022/annotate"  // stko's student-proj.geog.ucsb.edu
+var API_URL = "http://13.57.28.161:5022/annotate"  // stko's student-proj.geog.ucsb.edu
                                                             //128.111.106.236
 
 
